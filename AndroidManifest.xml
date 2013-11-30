@@ -7,7 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="18" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -29,12 +30,16 @@
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="cz.webcook.eshopscanner.ProductFormActivity"
+            android:name="cz.webcook.eshopscanner.activities.ProductFormActivity"
             android:label="@string/title_activity_product_form" >
         </activity>
         <activity
-            android:name="cz.webcook.eshopscanner.ProductsActivity"
+            android:name="cz.webcook.eshopscanner.activities.ProductsActivity"
             android:label="@string/title_activity_products" >
+        </activity>
+        <activity
+            android:name="cz.webcook.eshopscanner.activities.BarcodeActivity"
+            android:label="@string/title_activity_barcode" >
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package cz.webcook.eshopscanner;
+package cz.webcook.eshopscanner.models;
 
 import java.io.Serializable;
 

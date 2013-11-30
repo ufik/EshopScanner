@@ -1,6 +1,7 @@
-package cz.webcook.eshopscanner;
+package cz.webcook.eshopscanner.models;
 
 import java.util.ArrayList;
+
 
 public class Order {
 	

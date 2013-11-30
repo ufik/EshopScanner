@@ -9,12 +9,12 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_url" />
+        android:title="@string/pref_title_url" android:shouldDisableView="true"/>
     
     <EditTextPreference
         android:capitalize="words"
         android:defaultValue=""
-        android:inputType="textCapWords"
+        android:inputType="textPassword"
         android:key="identificator"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -24,7 +24,7 @@
     <EditTextPreference
         android:capitalize="words"
         android:defaultValue=""
-        android:inputType="textCapWords"
+        android:inputType="textPassword"
         android:key="token"
         android:maxLines="1"
         android:selectAllOnFocus="true"

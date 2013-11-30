@@ -1,15 +1,20 @@
-package cz.webcook.eshopscanner;
+package cz.webcook.eshopscanner.adapters;
 
 import java.util.List;
+
+import cz.webcook.eshopscanner.R;
+import cz.webcook.eshopscanner.R.id;
+import cz.webcook.eshopscanner.R.layout;
+import cz.webcook.eshopscanner.models.Product;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ProductAdapter extends ArrayAdapter<Product> {
+public class BarcodeAdapter extends ArrayAdapter<Product> {
 
-	public ProductAdapter(Context context, List<Product> objects) {
+	public BarcodeAdapter(Context context, List<Product> objects) {
 		super(context, 0, objects);
 	}
 

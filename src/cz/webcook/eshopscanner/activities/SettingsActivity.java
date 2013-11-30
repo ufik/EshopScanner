@@ -1,11 +1,15 @@
 package cz.webcook.eshopscanner.activities;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -16,10 +20,24 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import cz.webcook.eshopscanner.R;
+import cz.webcook.eshopscanner.activities.ProductsActivity.ProductDownloadTask;
+import cz.webcook.eshopscanner.activities.ProductsActivity.ProductUploadTask;
+import cz.webcook.eshopscanner.models.Product;
+import cz.webcook.eshopscanner.services.EshopApiIntegrator;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -41,11 +59,20 @@ public class SettingsActivity extends PreferenceActivity {
 	 */
 	private static final boolean ALWAYS_SIMPLE_PREFS = false;
 
+	private ProgressDialog waitDlg;
+	
+	private EshopApiIntegrator eai;
+	
+	SharedPreferences prefs;
+	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 
 		setupSimplePreferencesScreen();
+		
+		 prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
 	}
 
 	/**
@@ -164,4 +191,80 @@ public class SettingsActivity extends PreferenceActivity {
 			bindPreferenceSummaryToValue(findPreference("example_list"));
 		}
 	}
+	
+	private void checkApiSettings(){
+		new CheckSettingsTask().execute(1);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.settings, menu);
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_check_settings:
+                
+            	checkApiSettings();
+            	
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        
+		return false;
+    }
+	
+	public class CheckSettingsTask extends AsyncTask<Integer, Integer, Boolean> {
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			
+			if(waitDlg != null)
+				waitDlg.dismiss();
+			
+			if(result){ 
+				
+				Toast.makeText(SettingsActivity.this, R.string.api_configuration_ok, Toast.LENGTH_LONG).show();
+
+			}else{
+				Toast.makeText(SettingsActivity.this, R.string.api_configuration_error, Toast.LENGTH_LONG).show();
+			}
+		}
+
+		@Override
+		protected void onPreExecute() {
+			
+			String apiUrl = prefs.getString("url", "");
+			String identificator = prefs.getString("identificator", "");
+			String token = prefs.getString("token", "");
+			
+			eai = new EshopApiIntegrator(apiUrl, identificator, token);
+			
+			waitDlg = new ProgressDialog(SettingsActivity.this);
+			waitDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			waitDlg.setTitle(R.string.progress_title);
+			waitDlg.setMessage(getString(R.string.progress_checking_message));
+			waitDlg.setIndeterminate(false);
+			
+			if(waitDlg != null)
+				waitDlg.show();
+			
+		}
+		
+		protected void onProgressUpdate(Integer... progress) {
+	        waitDlg.setProgress(progress[0]);
+	     }
+		
+		@Override
+		protected Boolean doInBackground(Integer... config) {
+			
+			return eai.checkSettings();
+		}
+		
+	}
+	
 }

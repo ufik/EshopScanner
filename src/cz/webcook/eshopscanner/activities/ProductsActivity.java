@@ -1,4 +1,4 @@
-package cz.webcook.eshopscanner;
+package cz.webcook.eshopscanner.activities;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +12,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 
-import cz.webcook.eshopscanner.activities.SettingsActivity;
+import cz.webcook.eshopscanner.InternalStorage;
+import cz.webcook.eshopscanner.R;
+import cz.webcook.eshopscanner.R.id;
+import cz.webcook.eshopscanner.R.layout;
+import cz.webcook.eshopscanner.R.menu;
+import cz.webcook.eshopscanner.R.string;
+import cz.webcook.eshopscanner.adapters.ProductAdapter;
+import cz.webcook.eshopscanner.models.Product;
+import cz.webcook.eshopscanner.services.EshopApiIntegrator;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
@@ -55,8 +63,8 @@ public class ProductsActivity extends Activity {
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		String apiUrl = prefs.getString("url", "");
-		String identificator = prefs.getString("url", "");
-		String token = prefs.getString("url", "");
+		String identificator = prefs.getString("identificator", "");
+		String token = prefs.getString("token", "");
 		
 		eai = new EshopApiIntegrator(apiUrl, identificator, token);
 		
@@ -87,6 +95,7 @@ public class ProductsActivity extends Activity {
 
 				Intent i = new Intent(ProductsActivity.this, ProductFormActivity.class);
 				i.putExtra("product", products.get(index));
+				i.putExtra("activity", "product");
 				startActivity(i);
 				
 				finish();
@@ -186,6 +195,12 @@ public class ProductsActivity extends Activity {
 	    }
 	}
 
+	private void clearProducts(){
+		products.clear();
+		updateProductAdapter();
+		saveState();
+	}
+	
 	private void deleteProductByItemId(Long itemId) {
 		this.products.remove(Integer.parseInt(itemId.toString()));
 		saveState();
@@ -206,23 +221,105 @@ public class ProductsActivity extends Activity {
             	Intent i = new Intent(ProductsActivity.this, SettingsActivity.class);
 				startActivity(i);
             	
-                return true;
-                
+                break;
             case R.id.action_new_product:
             	
             	Intent i1 = new Intent(ProductsActivity.this, ProductFormActivity.class);
+            	i1.putExtra("activity", "product");
 				startActivity(i1);
             	
-				return true;
-				
+				break;
             case R.id.action_upload:
             	
             	new ProductUploadTask().execute(this.products);
+            	break;
+            case R.id.action_clear_products:
+            	
+            	clearProducts();
 				
+            	break;
+            case R.id.action_download:
+            	
+            	new ProductDownloadTask().execute(EshopApiIntegrator.ALL_PRODUCTS);
+				
+            	break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        
+		return false;
     }
+	
+	public class ProductDownloadTask extends AsyncTask<Integer, Integer, JSONObject> {
+		
+		protected void onPostExecute(JSONObject result) {
+			
+			if(waitDlg != null)
+				waitDlg.dismiss();
+			
+			if(result != null){ 
+					
+				String message;
+				try {
+					
+					message = result.getString("message");
+					
+					JSONArray response = result.getJSONArray("response");
+					
+					clearProducts();
+					for (int i = 0; i < response.length(); i++) {
+						JSONObject product = (JSONObject) response.get(i);
+						
+						Product p = new Product();
+						p.setName(product.getString("title"));
+						p.setId(product.getInt("id"));
+						p.setBarcode(product.getString("barcode"));
+						p.setBarcodeType(product.getString("barcodeType"));
+						p.setPrice(Float.valueOf(product.getString("priceWithVat")));
+						p.setStore(Integer.valueOf(product.getString("store")));
+						p.setVat(Integer.valueOf(product.getString("vat")));
+						
+						products.add(p);
+					}
+					
+					saveState();
+					updateProductAdapter();
+					
+					Toast.makeText(ProductsActivity.this, message, Toast.LENGTH_LONG).show();
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+			}else{
+				Toast.makeText(ProductsActivity.this, "unknow error", Toast.LENGTH_LONG).show();
+			}
+		}
+
+		protected void onPreExecute() {
+			
+			waitDlg = new ProgressDialog(ProductsActivity.this);
+			waitDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			waitDlg.setTitle(R.string.progress_title);
+			waitDlg.setMessage(getString(R.string.progress_download_message));
+			waitDlg.setIndeterminate(false);
+			
+			if(waitDlg != null)
+				waitDlg.show();
+			
+		}
+		
+		protected void onProgressUpdate(Integer... progress) {
+	        waitDlg.setProgress(progress[0]);
+	     }
+		
+		protected JSONObject doInBackground(Integer... config) {
+			
+			JSONObject res = eai.downloadProducts(config[0]);				
+			 		
+			return res;
+		}
+	}
 	
 	public class ProductUploadTask extends AsyncTask<ArrayList<Product>, Integer, ArrayList<JSONObject>> {
 		
@@ -258,7 +355,7 @@ public class ProductsActivity extends Activity {
 			
 			waitDlg = new ProgressDialog(ProductsActivity.this);
 			waitDlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			waitDlg.setTitle(R.string.progress_upload_title);
+			waitDlg.setTitle(R.string.progress_title);
 			waitDlg.setMessage(getString(R.string.progress_upload_message));
 			waitDlg.setIndeterminate(false);
 			

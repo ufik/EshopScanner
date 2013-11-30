@@ -8,12 +8,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.view.Menu;
-import cz.webcook.eshopscanner.ProductsActivity;
 import cz.webcook.eshopscanner.R;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-	private Button newProductButton, listProductsButton;
+	private Button listProductsButton, fillinBarcodesButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +20,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 		
 		listProductsButton = (Button)findViewById(R.id.buttonListProducts);
+		fillinBarcodesButton = (Button)findViewById(R.id.buttonFillinBarcodes);
 		
 		listProductsButton.setOnClickListener(this);
+		fillinBarcodesButton.setOnClickListener(this);
 	}
 
 	@Override
@@ -57,6 +58,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		if(v.getId() == R.id.buttonListProducts){
 			
 			Intent i = new Intent(MainActivity.this, ProductsActivity.class);
+			startActivity(i);
+			
+		}else if(v.getId() == R.id.buttonFillinBarcodes){
+			
+			Intent i = new Intent(MainActivity.this, BarcodeActivity.class);
 			startActivity(i);
 			
 		}

@@ -10,6 +10,9 @@
     <string name="scan">Scan</string>
     <string name="action_exit">Exit</string>
     <string name="title_activity_product_form">ProductFormActivity</string>
+    <string name="title_vat">VAT</string>
+    <string name="title_barcode">Barcode</string>
+    <string name="title_price">Price</string>
     <string name="button_save">Save</string>
     <string name="button_scan">Scan</string>
     <string name="new_product">New product</string>
@@ -24,7 +27,15 @@
     <string name="title_activity_products">ProductsActivity</string>
     <string name="context_delete">Delete</string>
     <string name="product_form_data_error">Please fill at least barcode.</string>
-	<string name="progress_upload_title">Wait</string>
-	<string name="progress_upload_message">Uploading data&#8230;</string>
+    <string name="progress_title">Wait a second</string>
+    <string name="progress_upload_message">Uploading data&#8230;</string>
+    <string name="progress_checking_message">Checking configuration</string>
+    <string name="progress_download_message">Downloading data&#8230;</string>
+    <string name="fillin_barcodes">Fill in barcodes</string>
+    <string name="title_activity_barcode">BarcodeActivity</string>
+	<string name="action_download">Download</string>
+	<string name="action_clear_products">Clear list</string>
+	<string name="api_configuration_ok">API configuration is ok.</string>
+	<string name="api_configuration_error">Bad API configuration.</string>
     
 </resources>

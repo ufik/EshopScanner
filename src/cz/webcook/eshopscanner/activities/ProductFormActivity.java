@@ -1,13 +1,14 @@
-package cz.webcook.eshopscanner;
-
-import java.text.BreakIterator;
+package cz.webcook.eshopscanner.activities;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import cz.webcook.eshopscanner.activities.MainActivity;
-import cz.webcook.eshopscanner.activities.SettingsActivity;
-
+import cz.webcook.eshopscanner.R;
+import cz.webcook.eshopscanner.R.id;
+import cz.webcook.eshopscanner.R.layout;
+import cz.webcook.eshopscanner.R.menu;
+import cz.webcook.eshopscanner.R.string;
+import cz.webcook.eshopscanner.models.Product;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -38,6 +39,8 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 	
 	private Product product;
 	
+	private String activity;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,6 +53,8 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		editVat = (EditText) findViewById(R.id.editVat);
 		editStore = (EditText) findViewById(R.id.editStore);
 		
+		this.product = new Product();
+		
 		// default values
 		Bundle bundle = getIntent().getExtras();
 		
@@ -58,6 +63,7 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 				Product product = (Product) bundle.getSerializable("product");
 				
 				if(product != null){
+					this.product = product;
 					editName.setText(product.getName());
 					editPrice.setText(product.getPrice().toString());
 					editBarcode.setText(product.getBarcode());
@@ -66,6 +72,11 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 					editStore.setText(Integer.toString(product.getStore()));
 				}
 			}
+			
+			if(bundle.containsKey("activity")){
+				activity = bundle.getString("activity");
+			}
+			
 		}
 		
 		buttonSave = (Button) findViewById(R.id.buttonSave);
@@ -74,7 +85,6 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		buttonSave.setOnClickListener(this);
 		buttonScan.setOnClickListener(this);
 		
-		product = new Product();
 	}
 
 	@Override
@@ -82,8 +92,6 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.product_form, menu);
 		return true;
-		
-		
 	}
 	
 	@Override
@@ -100,6 +108,14 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 				editPrice.setText("0");
 			}
 			
+			if(editVat.getText().toString().length() == 0){
+				editVat.setText("0");
+			}
+			
+			if(editStore.getText().toString().length() == 0){
+				editStore.setText("0");
+			}
+			
 			if(ok){
 				this.product.setName(editName.getText().toString());
 				this.product.setPrice(Float.valueOf(editPrice.getText().toString()));
@@ -108,7 +124,13 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 				this.product.setVat(Integer.valueOf(editVat.getText().toString()));
 				this.product.setStore(Integer.valueOf(editStore.getText().toString()));
 				
-				Intent i = new Intent(ProductFormActivity.this, ProductsActivity.class);
+				Intent i = null;
+				if(activity.equals("product")){ 
+					i = new Intent(ProductFormActivity.this, ProductsActivity.class);
+				}else if(activity.equals("barcode")){
+					i = new Intent(ProductFormActivity.this, BarcodeActivity.class);
+				}
+				
 				i.putExtra("product", this.product);
 				startActivity(i);
 				
