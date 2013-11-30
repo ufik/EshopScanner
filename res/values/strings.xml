@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EshopScanner</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_new_product">New</string>
+    <string name="action_upload">Upload</string>
+    <string name="action_check_settings">Check settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="scan">Scan</string>
+    <string name="action_exit">Exit</string>
+    <string name="title_activity_product_form">ProductFormActivity</string>
+    <string name="button_save">Save</string>
+    <string name="button_scan">Scan</string>
+    <string name="new_product">New product</string>
+    <string name="new_order">New order</string>
+    <string name="list_products">List products</string>
+    <string name="hintName">Name of product</string>
+    <string name="hintPrice">Price with VAT</string>
+    <string name="hintBarcode">Barcode</string>
+    <string name="hintBarcodeType">Barcode type</string>
+    <string name="hintVat">VAT</string>
+    <string name="hintStore">Store</string>
+    <string name="title_activity_products">ProductsActivity</string>
+    <string name="context_delete">Delete</string>
+    <string name="product_form_data_error">Please fill at least barcode.</string>
+	<string name="progress_upload_title">Wait</string>
+	<string name="progress_upload_message">Uploading data&#8230;</string>
+    
+</resources>

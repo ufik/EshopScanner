@@ -1,0 +1,14 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_url">API url</string>
+    <string name="pref_title_identificator">API identificator</string>
+    <string name="pref_title_token">API token</string>
+   
+</resources>
