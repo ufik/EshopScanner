@@ -1,13 +1,21 @@
 package cz.webcook.eshopscanner.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Order {
+public class Order implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private int id = 0;
 	
 	private String name = "Eshop scanner";
 	
-	private ArrayList<Product> products;
+	private ArrayList<Product> products = new ArrayList<Product>();
 
 	public void addProduct(Product product){
 		
@@ -40,5 +48,29 @@ public class Order {
 	 */
 	public void setProducts(ArrayList<Product> products) {
 		this.products = products;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public Float getTotalPrice(){
+		Float total = 0f;
+		
+		for (Product product : this.products) {
+			total += product.getPrice();
+		}
+		
+		return total;
 	}
 }

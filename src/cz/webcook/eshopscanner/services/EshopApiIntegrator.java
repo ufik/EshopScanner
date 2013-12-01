@@ -10,9 +10,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -24,8 +22,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import cz.webcook.eshopscanner.AeSimpleSHA1;
+import cz.webcook.eshopscanner.models.Order;
 import cz.webcook.eshopscanner.models.Product;
 
 @SuppressLint("NewApi")
@@ -94,6 +92,43 @@ public class EshopApiIntegrator {
 	    	return null;
 	    }
 		
+	}
+	
+	public JSONObject uploadOrder(Order order) {
+		// Create a new HttpClient and Post Header
+	    HttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = new HttpPost(this.apiUrl + ACTION_ORDER);
+
+	    try {
+	        // Add your data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+	        
+	        for (Product product : order.getProducts()) {
+	        	nameValuePairs.add(new BasicNameValuePair("barcode[]", product.getBarcode()));
+			}
+	        
+	        nameValuePairs.add(new BasicNameValuePair("hash", this.getApiHash(this.identificator, this.token)));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpclient.execute(httppost);
+	        
+	        String text = this.decodeResponse(response);
+	        
+			JSONObject r = new JSONObject(text);
+					
+			return r;
+	        
+	    } catch (IOException e) {
+	        // TODO Auto-generated catch block
+	    	e.getStackTrace();
+	    	
+	    	return null;
+	    } catch(Exception e){
+	    	e.getStackTrace();
+	    	
+	    	return null;
+	    }
 	}
 	
 	public JSONObject uploadBarcode(Product product){
@@ -293,4 +328,5 @@ public class EshopApiIntegrator {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
 }

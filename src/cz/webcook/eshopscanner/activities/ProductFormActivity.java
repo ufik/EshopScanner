@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -79,6 +80,8 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 			
 		}
 		
+		setTitle(this.product.getName());
+		
 		buttonSave = (Button) findViewById(R.id.buttonSave);
 		buttonScan = (Button) findViewById(R.id.buttonScan);
 		
@@ -93,6 +96,20 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		getMenuInflater().inflate(R.menu.product_form, menu);
 		return true;
 	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                
+            	Intent i1 = new Intent(ProductFormActivity.this, SettingsActivity.class);
+            	startActivity(i1);
+            	
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 	
 	@Override
 	public void onClick(View v) {

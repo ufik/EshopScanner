@@ -12,7 +12,7 @@ import cz.webcook.eshopscanner.R;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-	private Button listProductsButton, fillinBarcodesButton;
+	private Button listProductsButton, fillinBarcodesButton, ordersButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,9 +21,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		listProductsButton = (Button)findViewById(R.id.buttonListProducts);
 		fillinBarcodesButton = (Button)findViewById(R.id.buttonFillinBarcodes);
+		ordersButton = (Button)findViewById(R.id.buttonListOrders);
 		
 		listProductsButton.setOnClickListener(this);
 		fillinBarcodesButton.setOnClickListener(this);
+		ordersButton.setOnClickListener(this);
 	}
 
 	@Override
@@ -65,8 +67,12 @@ public class MainActivity extends Activity implements OnClickListener {
 			Intent i = new Intent(MainActivity.this, BarcodeActivity.class);
 			startActivity(i);
 			
+		}else if(v.getId() == R.id.buttonListOrders){
+			
+			Intent i = new Intent(MainActivity.this, OrderActivity.class);
+			startActivity(i);
+			
 		}
-		
 	}
 
 }

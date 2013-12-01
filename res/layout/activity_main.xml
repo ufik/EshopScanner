@@ -17,21 +17,21 @@
         android:text="@string/list_products" />
 
     <Button
-        android:id="@+id/buttonCreateOrder"
+        android:id="@+id/buttonListOrders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/buttonListProducts"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/buttonListProducts"
-        android:text="@string/new_order" />
+        android:text="@string/list_orders" />
 
     <Button
         android:id="@+id/buttonFillinBarcodes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/buttonCreateOrder"
+        android:layout_alignLeft="@+id/buttonListOrders"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/buttonCreateOrder"
+        android:layout_below="@+id/buttonListOrders"
         android:text="@string/fillin_barcodes" />
 
 </RelativeLayout>

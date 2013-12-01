@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -64,6 +66,13 @@ public class SettingsActivity extends PreferenceActivity {
 	private EshopApiIntegrator eai;
 	
 	SharedPreferences prefs;
+	
+	public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager 
+              = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+    }
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -208,7 +217,11 @@ public class SettingsActivity extends PreferenceActivity {
         switch (item.getItemId()) {
             case R.id.action_check_settings:
                 
-            	checkApiSettings();
+            	if(isNetworkAvailable()){
+            		checkApiSettings();
+            	}else{
+            		Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            	}
             	
                 break;
             default:

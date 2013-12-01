@@ -18,9 +18,11 @@ import cz.webcook.eshopscanner.R.id;
 import cz.webcook.eshopscanner.R.layout;
 import cz.webcook.eshopscanner.R.menu;
 import cz.webcook.eshopscanner.R.string;
+import cz.webcook.eshopscanner.activities.OrderActivity.OrderUploadTask;
 import cz.webcook.eshopscanner.adapters.ProductAdapter;
 import cz.webcook.eshopscanner.models.Product;
 import cz.webcook.eshopscanner.services.EshopApiIntegrator;
+import cz.webcook.eshopscanner.services.ProductsService;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
@@ -39,11 +41,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ProductsActivity extends Activity {
+public class ProductsActivity extends AbstractActivity {
 
 	private ArrayList<Product> products;
-	
-	private final static String PRODUCT_KEY = "productsStorage";
 	
 	private ArrayAdapter<Product> aa;
 	
@@ -68,7 +68,8 @@ public class ProductsActivity extends Activity {
 		
 		eai = new EshopApiIntegrator(apiUrl, identificator, token);
 		
-		initializeProducts();
+		ProductsService ps = new ProductsService(getApplicationContext());
+		this.products = ps.getProducts();
 		
 		Bundle bundle = getIntent().getExtras();
 		
@@ -146,29 +147,10 @@ public class ProductsActivity extends Activity {
 			    }
 			});
 			
-			InternalStorage.writeObject(this, PRODUCT_KEY, this.products);
+			InternalStorage.writeObject(this, ProductsService.PRODUCT_KEY, this.products);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-	
-	private void initializeProducts() {
-		try {
-			this.products = (ArrayList<Product>) InternalStorage.readObject(this, PRODUCT_KEY);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			try {
-				this.products = new ArrayList<Product>();
-				InternalStorage.writeObject(this, PRODUCT_KEY, this.products);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
 		}
 	}
 	
@@ -231,7 +213,13 @@ public class ProductsActivity extends Activity {
 				break;
             case R.id.action_upload:
             	
-            	new ProductUploadTask().execute(this.products);
+            	if(isNetworkAvailable()){
+            		new ProductUploadTask().execute(this.products);
+            	}else{
+            		Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            	}
+            	
+            	
             	break;
             case R.id.action_clear_products:
             	
@@ -240,8 +228,12 @@ public class ProductsActivity extends Activity {
             	break;
             case R.id.action_download:
             	
-            	new ProductDownloadTask().execute(EshopApiIntegrator.ALL_PRODUCTS);
-				
+            	if(isNetworkAvailable()){
+            		new ProductDownloadTask().execute(EshopApiIntegrator.ALL_PRODUCTS);
+            	}else{
+            		Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            	}
+            	
             	break;
             default:
                 return super.onOptionsItemSelected(item);

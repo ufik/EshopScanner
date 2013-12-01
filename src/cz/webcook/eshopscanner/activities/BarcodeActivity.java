@@ -35,7 +35,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class BarcodeActivity extends Activity {
+public class BarcodeActivity extends AbstractActivity{
 
 	private SharedPreferences prefs;
 	
@@ -170,23 +170,39 @@ public class BarcodeActivity extends Activity {
 		getMenuInflater().inflate(R.menu.barcode, menu);
 		return true;
 	}
-	
+
 	public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_download:
                 
-            	new ProductDownloadTask().execute(EshopApiIntegrator.ONLY_WITHOUT_BARCODE);
+            	if(isNetworkAvailable()){
+            		new ProductDownloadTask().execute(EshopApiIntegrator.ONLY_WITHOUT_BARCODE);
+            	}else{
+            		Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            	}
             	
-                return true;
-            
+                break;
             case R.id.action_upload:
             	
-            	new ProductUploadTask().execute(products);
-            
+            	if(isNetworkAvailable()){
+            		new ProductUploadTask().execute(products);
+            	}else{
+            		Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            	}
+            	
+            	break;
+            case R.id.action_settings:
+                
+            	Intent i = new Intent(BarcodeActivity.this, SettingsActivity.class);
+				startActivity(i);
+            	
+                return true;
+                
             default:
                 return super.onOptionsItemSelected(item);
         }
+		return false;
     }
 	
 	public class ProductDownloadTask extends AsyncTask<Integer, Integer, JSONObject> {

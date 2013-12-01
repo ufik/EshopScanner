@@ -13,7 +13,7 @@ public class Product implements Serializable {
 	
 	private String name;
 	
-	private Float price;
+	private Float price = 0f;
 	
 	private String barcode;
 	
