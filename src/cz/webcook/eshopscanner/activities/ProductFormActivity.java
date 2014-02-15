@@ -10,14 +10,22 @@ import cz.webcook.eshopscanner.R.menu;
 import cz.webcook.eshopscanner.R.string;
 import cz.webcook.eshopscanner.models.Product;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class ProductFormActivity extends Activity implements OnClickListener {
@@ -38,9 +46,23 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 	
 	private Button buttonScan;
 	
+	private Button buttonCamera;
+	
 	private Product product;
 	
 	private String activity;
+	
+	private Gallery sdcardImages;
+	private ImageAdapter iAdapter = new ImageAdapter(this);
+	
+	/**
+     * Cursor used to access the results from querying for images on the SD card.
+     */
+    private Cursor cursor;
+    /*
+     * Column index for the Thumbnails Image IDs.
+     */
+    private int columnIndex;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +106,44 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		
 		buttonSave = (Button) findViewById(R.id.buttonSave);
 		buttonScan = (Button) findViewById(R.id.buttonScan);
+		buttonCamera = (Button) findViewById(R.id.buttonCamera);
 		
 		buttonSave.setOnClickListener(this);
 		buttonScan.setOnClickListener(this);
+		buttonCamera.setOnClickListener(this);
 		
+		this.updateCursor();
+
+        sdcardImages = (Gallery) findViewById(R.id.gallery1);
+        sdcardImages.setAdapter(iAdapter);
 	}
 
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		this.updateCursor();
+        iAdapter.notifyDataSetChanged();
+	}
+	
+	private void updateCursor(){
+		
+		String[] projection = {MediaStore.Images.Thumbnails._ID};
+		
+		// Create the cursor pointing to the SDCard
+        cursor = managedQuery( MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection, 
+                MediaStore.Images.Media.DATA + " like ? ",
+                new String[] {"%EshopScanner/"+ product.getBarcode() +"%"},  
+                null);
+        // Get the column index of the Thumbnails Image ID
+        if(cursor != null){
+        	if(cursor.getColumnCount() > 0) columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
+        }
+		
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -160,6 +214,10 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		}else if(v.getId() == R.id.buttonScan){
 			IntentIntegrator scanIntegrator = new IntentIntegrator(this);
 			scanIntegrator.initiateScan();
+		}else if(v.getId() == R.id.buttonCamera){
+			Intent i = new Intent(ProductFormActivity.this, CameraActivity.class);
+			i.putExtra("product", this.product);
+			startActivity(i);
 		}
 		
 	}
@@ -183,5 +241,52 @@ public class ProductFormActivity extends Activity implements OnClickListener {
 		    toast.show();
 		}
 	}
+	
+	/**
+     * Adapter for our image files.
+     */
+    private class ImageAdapter extends BaseAdapter {
+
+        private Context context;
+
+        public ImageAdapter(Context localContext) {
+            context = localContext;
+        }
+
+        public int getCount() {
+            try {
+            	return cursor.getCount();
+			} catch (Exception e) {
+				return 0;
+			}
+        	
+        }
+        
+        public Object getItem(int position) {
+            return position;
+        }
+        
+        public long getItemId(int position) {
+            return position;
+        }
+        
+        public View getView(int position, View convertView, ViewGroup parent) {
+        	ImageView i = new ImageView(context);
+            // Move cursor to current position
+            cursor.moveToPosition(position);
+            // Get the current value for the requested column
+            int imageID = cursor.getInt(columnIndex);
+            
+            Bitmap b = MediaStore.Images.Thumbnails.getThumbnail(getContentResolver(),
+            		imageID, MediaStore.Images.Thumbnails.MINI_KIND, null);
+
+            i.setImageBitmap(b);
+            i.setLayoutParams(new Gallery.LayoutParams(150, 100));
+            i.setScaleType(ImageView.ScaleType.FIT_XY);
+			i.setBackgroundResource(0);
+            return i;
+        }
+
+    }
 
 }

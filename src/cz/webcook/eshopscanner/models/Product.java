@@ -23,6 +23,12 @@ public class Product implements Serializable {
 	
 	private int store;
 
+	private Boolean checked;
+	
+	public void Product(){
+		this.checked = false;
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -119,5 +125,19 @@ public class Product implements Serializable {
 	 */
 	public void setStore(int store) {
 		this.store = store;
+	}
+
+	/**
+	 * @return the checked
+	 */
+	public Boolean getChecked() {
+		return checked;
+	}
+
+	/**
+	 * @param checked the checked to set
+	 */
+	public void setChecked(Boolean checked) {
+		this.checked = checked;
 	}
 }

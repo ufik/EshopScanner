@@ -74,20 +74,37 @@
         android:hint="@string/hintStore"
         android:inputType="number" />
 
+    <Gallery
+            android:id="@+id/gallery1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+        	android:layout_alignParentRight="true"
+             android:layout_below="@+id/editStore"
+             />
+    
     <Button
         android:id="@+id/buttonSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/editStore"
+        android:layout_below="@+id/gallery1"
         android:text="@string/button_save" />
 
     <Button
         android:id="@+id/buttonScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editStore"
+        android:layout_below="@+id/gallery1"
         android:layout_toRightOf="@+id/buttonSave"
         android:text="@string/button_scan" />
+    
+    <Button
+        android:id="@+id/buttonCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gallery1"
+        android:layout_toRightOf="@+id/buttonScan"
+        android:text="@string/button_camera" />
 
 </RelativeLayout>

@@ -10,11 +10,13 @@
     <string name="scan">Scan</string>
     <string name="action_exit">Exit</string>
     <string name="title_activity_product_form">Product</string>
+    <string name="title_activity_camera">Take photo</string>
     <string name="title_vat">VAT</string>
     <string name="title_barcode">Barcode</string>
     <string name="title_price">Price</string>
     <string name="button_save">Save</string>
     <string name="button_scan">Scan</string>
+    <string name="button_camera">Take photo</string>
     <string name="new_product">New product</string>
     <string name="new_order">New order</string>
     <string name="list_products">List products</string>
@@ -48,4 +50,12 @@
     <string name="order_item_product_count">Products count:</string>
     <string name="order_item_total_price">Total price:</string>
 	<string name="no_internet_connection">No internet connection.</string>
+	<string name="title_settings_product_view">Simple view</string>
+	<string name="title_settings_display">Display</string>
+	<string name="title_settings_api">API</string>
+	<string name="toast_fill_barcode_error">Please fill barcode before upload.</string>
+	<string name="action_check_all">Check all</string>
+	<string name="action_uncheck_all">Uncheck all</string>
+	<string name="btn_back">Back</string>
+	<string name="btn_take_picture">Take picture</string>
 </resources>

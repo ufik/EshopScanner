@@ -84,7 +84,7 @@ public class ProductsActivity extends AbstractActivity {
 		}
 		
         // set adapter
-		aa = new ProductAdapter(ProductsActivity.this, products);
+		aa = new ProductAdapter(ProductsActivity.this, products, prefs);
 		lv.setAdapter(aa);
 		
 		registerForContextMenu(lv);
@@ -104,7 +104,27 @@ public class ProductsActivity extends AbstractActivity {
 			}
 		});
 	}
-
+	
+	protected void onResume() {
+		super.onResume();
+		
+		this.updateProductAdapter();
+	}
+	
+	public void updateProduct(Product p, Boolean checked){
+		
+		int index = this.products.indexOf(p);
+		if(p.getBarcode().length() > 0){
+			p.setChecked(checked);
+			this.products.set(index, p);
+			this.updateProductAdapter();
+		}else{
+			Toast.makeText(this, R.string.toast_fill_barcode_error, Toast.LENGTH_LONG).show();
+		}
+		
+		this.updateProductAdapter();
+	}
+	
 	private void addProduct(Product p){
 		
 		Product tmpProduct = null;
@@ -219,12 +239,31 @@ public class ProductsActivity extends AbstractActivity {
             		Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
             	}
             	
-            	
             	break;
             case R.id.action_clear_products:
             	
             	clearProducts();
 				
+            	break;
+            case R.id.action_check_all:
+            	
+            	for (Product p : this.products) {
+					if(p.getBarcode().length() > 0){
+						p.setChecked(true);
+					}
+				}
+            	
+            	this.updateProductAdapter();
+            	
+            	break;
+            case R.id.action_uncheck_all:
+            	
+            	for (Product p : this.products) {
+					p.setChecked(false);
+				}
+            	
+            	this.updateProductAdapter();
+            	
             	break;
             case R.id.action_download:
             	
@@ -270,8 +309,11 @@ public class ProductsActivity extends AbstractActivity {
 						p.setPrice(Float.valueOf(product.getString("priceWithVat")));
 						p.setStore(Integer.valueOf(product.getString("store")));
 						p.setVat(Integer.valueOf(product.getString("vat")));
+						p.setChecked(false);
 						
-						products.add(p);
+						if(p.getBarcode().length() > 0){
+							products.add(p);
+						}
 					}
 					
 					saveState();
@@ -365,13 +407,20 @@ public class ProductsActivity extends AbstractActivity {
 			
 			ArrayList<Product> iterates = products[0];
 			
+			ArrayList<Product> toUpload = new ArrayList<Product>();
+			for (Product product : iterates) {
+				if(product.getChecked()){
+					toUpload.add(product);
+				}
+			}
+			
 			ArrayList<JSONObject> res = new ArrayList<JSONObject>();
 			int count = iterates.size();
-			for (int i = 0; i < iterates.size(); i++) {
+			
+			for (int i = 0; i < toUpload.size(); i++) {
 				
-				res.add(eai.uploadProduct(iterates.get(i)));				
+				res.add(eai.uploadProduct(toUpload.get(i)));				
 				publishProgress((int) ((i / (float) count) * 100));				
-
 			}
 			 		
 			return res;

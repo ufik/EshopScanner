@@ -15,8 +15,10 @@ import cz.webcook.eshopscanner.models.Order;
 import cz.webcook.eshopscanner.models.Product;
 import cz.webcook.eshopscanner.services.ProductsService;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -35,12 +37,16 @@ public class OrderFormActivity extends Activity {
 	
 	private ArrayAdapter<Product> aa;
 	
+	private SharedPreferences prefs;
+	
 	private ProductsService ps;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_order_form);
+		
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		ps = new ProductsService(getApplicationContext());
 		
@@ -71,7 +77,7 @@ public class OrderFormActivity extends Activity {
 		ListView lv = (ListView) findViewById(R.id.listView1);
 		
 		// set adapter
-		aa = new ProductAdapter(OrderFormActivity.this, this.order.getProducts());
+		aa = new ProductAdapter(OrderFormActivity.this, this.order.getProducts(), prefs);
 		lv.setAdapter(aa);
 		
 		registerForContextMenu(lv);
